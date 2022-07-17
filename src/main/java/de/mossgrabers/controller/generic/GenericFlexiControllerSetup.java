@@ -329,12 +329,8 @@ public class GenericFlexiControllerSetup extends AbstractControllerSetup<Generic
     }
 
 
-    /**
-     * Handle a track selection change.
-     *
-     * @param isSelected Has the track been selected?
-     */
-    private void handleTrackChange (final boolean isSelected)
+    @Override
+    protected void handleTrackChange (final boolean isSelected)
     {
         if (isSelected)
             this.update (null);
@@ -366,6 +362,8 @@ public class GenericFlexiControllerSetup extends AbstractControllerSetup<Generic
 
         if (this.configuration.isKeyboardRouteModulation ())
             filters.add ("B" + midiChannel + "01??");
+        if (this.configuration.isKeyboardRouteExpression ())
+            filters.add ("B" + midiChannel + "0B??");
         if (this.configuration.isKeyboardRouteSustain ())
             filters.add ("B" + midiChannel + "40??");
         if (this.configuration.isKeyboardRouteTimbre ())

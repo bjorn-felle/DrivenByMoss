@@ -28,7 +28,6 @@ public class HidDeviceImpl implements IHidDevice
     private HidDevice hidDevice;
     private boolean   isOpen;
 
-
     /**
      * Constructor.
      *
@@ -44,6 +43,8 @@ public class HidDeviceImpl implements IHidDevice
         try
         {
             this.hidDevice = PureJavaHidApi.openDevice (hidDeviceInfo.get ());
+            if (this.hidDevice == null)
+                throw new IOException ("openDevice returned null.");
             this.isOpen = true;
             this.hidDevice.setDeviceRemovalListener (source -> this.isOpen = false);
         }
@@ -54,13 +55,15 @@ public class HidDeviceImpl implements IHidDevice
     }
 
 
-    /**
-     * Closes the device.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void close ()
     {
         if (this.isOpen)
+        {
+            this.isOpen = false;
             this.hidDevice.close ();
+        }
     }
 
 
@@ -76,7 +79,7 @@ public class HidDeviceImpl implements IHidDevice
         // data[0], therefore add it
         byte [] d = data;
         int l = data.length;
-        if (OperatingSystem.get () == OperatingSystem.MAC)
+        if (OperatingSystem.isMacOS ())
         {
             l++;
             d = new byte [l];
@@ -111,7 +114,7 @@ public class HidDeviceImpl implements IHidDevice
             // data[0], therefore remove it
             byte [] d = data;
             int l = length;
-            if (OperatingSystem.get () == OperatingSystem.MAC)
+            if (OperatingSystem.isMacOS ())
             {
                 l--;
                 d = new byte [l];

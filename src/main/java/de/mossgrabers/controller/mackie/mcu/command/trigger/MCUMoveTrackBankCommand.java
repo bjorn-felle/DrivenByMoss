@@ -78,13 +78,13 @@ public class MCUMoveTrackBankCommand extends AbstractTriggerCommand<MCUControlSu
         switch (activeID)
         {
             case EQ_DEVICE_PARAMS, INSTRUMENT_DEVICE_PARAMS, DEVICE_PARAMS:
-                final ISpecificDevice device = getDevice (activeID);
+                final ISpecificDevice device = this.getDevice (activeID);
                 if (this.moveBy1)
                 {
                     this.handleBankMovement (device.getParameterBank ());
                     return;
                 }
-                if (device instanceof ICursorDevice cursorDevice)
+                if (device instanceof final ICursorDevice cursorDevice)
                 {
                     if (this.moveLeft)
                         cursorDevice.selectPrevious ();
@@ -95,6 +95,21 @@ public class MCUMoveTrackBankCommand extends AbstractTriggerCommand<MCUControlSu
 
             case MARKERS:
                 this.handleBankMovement (this.model.getMarkerBank ());
+                break;
+
+            case DEVICE_LAYER:
+            case DEVICE_LAYER_VOLUME:
+            case DEVICE_LAYER_PAN:
+            case DEVICE_LAYER_SEND1:
+            case DEVICE_LAYER_SEND2:
+            case DEVICE_LAYER_SEND3:
+            case DEVICE_LAYER_SEND4:
+            case DEVICE_LAYER_SEND5:
+            case DEVICE_LAYER_SEND6:
+            case DEVICE_LAYER_SEND7:
+            case DEVICE_LAYER_SEND8:
+                final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+                this.handleBankMovement (cursorDevice.hasDrumPads () ? cursorDevice.getDrumPadBank () : cursorDevice.getLayerBank ());
                 break;
 
             default:
